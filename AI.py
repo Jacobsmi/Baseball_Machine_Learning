@@ -14,8 +14,8 @@ class AI:
         for year in years:
             OPS_AB = np.array([])
             Y = np.array([])
-            input_file = ('{cwd}\stats\Hitters_{input_year}.csv'.format(cwd=os.getcwd(), input_year = year))
-            with open(input_file) as csvfile:
+            path = os.path.join(os.getcwd(),'stats','Hitters_{input_year}.csv'.format(input_year = year))   
+            with open(path) as csvfile:
                 csv_reader = csv.reader(csvfile, delimiter = ',')
                 entry_count = 0
                 for row in csv_reader:
@@ -23,10 +23,10 @@ class AI:
                         value = float(row[5]) * float(row[22])
                         OPS_AB = np.append(OPS_AB, value)
                         Y = np.append(Y, int(row[10]))
+                        entry_count += 1
                     except:
                         print("Cannot append value {} or {}".format(row[5], row[10]))
                     
-                    entry_count += 1
             linear_regressor = LinearRegression()
             OPS_AB1 = OPS_AB.reshape(-1,1)
             linear_regressor.fit(OPS_AB1,Y)
