@@ -48,6 +48,10 @@ class AI:
     def predict(self, years, model_data):
         intercept = model_data[0]
         coef = model_data[1]
+        # variable that tracks the total error percentage so that the average can be calculated
+        total_error = 0
+        # Variable that tracks the total number of entries so that the average error can be calculated
+        num_entries = 0
         for year in years:
             path = os.path.join(os.getcwd(),'stats','Hitters_{input_year}.csv'.format(input_year = year))   
             with open(path) as csvfile:
@@ -56,14 +60,21 @@ class AI:
                 for row in csv_reader:
                     try:
                         actual = float(row[10])
-                        value = float(row[5]) * float(row[22])
-                        Y_PRED = coef * value + intercept 
-                        print("Predicted value for OPS_AB {} was {} and the actual value was {} ".format(value,Y_PRED,actual))
-                        error = abs(Y_PRED - actual)
-                        percent_error = (error / 1)
-                        print("There percentage of error for {} was {}".format(error, percent_error))
+                        if(actual > 0):
+                            value = float(row[5]) * float(row[22])
+                            Y_PRED = coef * value + intercept 
+                            # print("Predicted value for OPS_AB {} was {} and the actual value was {} ".format(value,Y_PRED,actual))
+                            error = abs(Y_PRED - actual)
+                            percent_error = (error / actual)
+                            num_entries += 1
+                            total_error += percent_error
+                            print("There percentage of error for {} was {} and the actual value was {}".format(error, percent_error, actual))
                     except Exception as e: 
                         print(e)
+        # end for
+        # Calculating average error for predictions
+        avg_err = total_error / num_entries
+        print("The average amount of error was {}".format(avg_err))
 
 
 
